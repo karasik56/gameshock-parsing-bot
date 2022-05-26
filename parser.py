@@ -1,10 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 
-# URL = "https://gameshock174.ru/catalog/xbox_360/videoigry_xbox_360/videoigry_b_u_215/?PAGEN_1="
-# URL = URL.strip()
+URL_xbox360 = "https://gameshock174.ru/catalog/xbox_360/videoigry_xbox_360/videoigry_b_u_215/"
+URL_ps3 = "https://gameshock174.ru/catalog/playstation_3/videoigry_ps3/videoigry_b_u_253/"
+
 HEADERS = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/96.0.4664.45 Safari/537.36',
     'accept': '*/*'
 }
 
@@ -38,26 +40,22 @@ def get_content(html):
     return games
 
 
-def parse():
-    URL = "https://gameshock174.ru/catalog/xbox_360/videoigry_xbox_360/videoigry_b_u_215/"
-    URL = URL.strip()
+def parse(platform, price=None):
+    if platform == "xbox360":
+        URL = URL_xbox360.strip()
+    elif platform == "ps3":
+        URL = URL_ps3.strip()
     html = get_html(URL)
     if html.status_code == 200:
         games = []
-        page_count = 1  # get_page_count(html.text)#TODO убрать комментарий с пагинации
+        page_count = 15  # get_page_count(html.text)#TODO убрать комментарий с пагинации
         for page in range(1, page_count + 1):  # перебор всех страниц с 1 до page_count
             print(f'Парсинг страницы {page} из {page_count}...')
             html = get_html(URL, params={"PAGEN_1": page})
             games.extend(get_content(html.text))
-        game_output(games)
+        return games
     else:
         print('Error')
 
 
-def game_output(games):
-    for game in games:
-        if game["availability"] != "Закончились":
-            print(f'Название игры: {game["title"]} цена {game["price"]} наличие {game["availability"]}')
 
-
-parse()
