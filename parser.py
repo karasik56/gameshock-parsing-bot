@@ -48,7 +48,7 @@ def parse(platform, price=None):
     html = get_html(URL)
     if html.status_code == 200:
         games = []
-        page_count = 15  # get_page_count(html.text)#TODO убрать комментарий с пагинации
+        page_count = get_page_count(html.text)
         for page in range(1, page_count + 1):  # перебор всех страниц с 1 до page_count
             print(f'Парсинг страницы {page} из {page_count}...')
             html = get_html(URL, params={"PAGEN_1": page})
